@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Observatorio Legislativo Nayarit | Información y Transparencia</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Configuración de Tailwind Personalizada -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            light: '#1e4b85',
+                            DEFAULT: '#0a2240', /* Azul institucional */
+                            dark: '#051120',
+                        },
+                        accent: '#d4af37' /* Dorado institucional */
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        html { scroll-behavior: smooth; }
+        
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        
+        .hero-overlay {
+            background: linear-gradient(135deg, rgba(10, 34, 64, 0.95) 0%, rgba(10, 34, 64, 0.7) 100%);
+        }
+        
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;  
+            overflow: hidden;
+        }
+
+        .article-card {
+            transition: all 0.3s ease;
+        }
+        .article-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Estilo para los espacios publicitarios */
+        .ad-space-placeholder {
+            background-color: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Estilos para el contenido de las notas */
+        .prose p { margin-bottom: 1.2em; line-height: 1.7; color: #374151; }
+        .prose h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: #0a2240; margin-top: 1.5em; margin-bottom: 0.5em; }
+        .prose ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1.2em; color: #374151;}
+        .prose li { margin-bottom: 0.5em; }
+        .prose strong { color: #111827; }
+        .prose blockquote { border-left: 4px solid #d4af37; padding-left: 1rem; font-style: italic; color: #4b5563; margin-bottom: 1.2em;}
+    </style>
+</head>
+<body class="bg-[#fcfdfd] text-gray-800 font-sans antialiased selection:bg-brand selection:text-white">
+
+    <!-- Header / Nav -->
+    <nav class="fixed w-full z-50 glass-nav transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-24 items-center">
+                <!-- Logo y Título -->
+                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <img class="h-16 w-16 drop-shadow-md rounded-full border border-gray-200" src="logo.png" alt="Observatorio Legislativo Logo">
+                    <div class="ml-4 hidden sm:block border-l-2 border-accent pl-4">
+                        <h1 class="text-2xl font-serif font-black text-brand tracking-tight leading-none mb-1">OBSERVATORIO</h1>
+                        <h2 class="text-[0.65rem] font-sans tracking-[0.2em] text-gray-500 uppercase font-semibold">Legislativo Nayarit</h2>
+                    </div>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#" class="text-sm text-gray-600 hover:text-brand font-semibold tracking-wide transition-colors uppercase">Inicio</a>
+                    <a href="#notas" class="text-sm text-gray-600 hover:text-brand font-semibold tracking-wide transition-colors uppercase">Análisis</a>
+                    <a href="https://www.facebook.com/profile.php?id=61595470195100" target="_blank" class="text-brand hover:text-blue-600 transition-colors text-lg" title="Síguenos en Facebook">
+                        <i class="fa-brands fa-facebook"></i>
+                    </a>
+                    <button id="nav-login-btn" onclick="showAdminLogin()" class="text-gray-300 hover:text-accent transition-colors ml-4" title="Acceso Administrativo">
+                        <i class="fa-solid fa-shield-halved text-sm"></i>
+                    </button>
+                    <button id="nav-logout-btn" onclick="logoutAdmin()" class="hidden text-red-400 hover:text-red-600 transition-colors ml-4 text-xs font-bold uppercase tracking-wider" title="Cerrar Sesión">
+                        Salir <i class="fa-solid fa-arrow-right-from-bracket ml-1"></i>
+                    </button>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center space-x-4">
+                    <a href="https://www.facebook.com/profile.php?id=61595470195100" target="_blank" class="text-brand text-lg">
+                        <i class="fa-brands fa-facebook"></i>
+                    </a>
+                    <button id="mobile-menu-btn" class="text-gray-800 hover:text-brand focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 shadow-xl absolute w-full">
+            <div class="px-4 pt-2 pb-6 space-y-2">
+                <a href="#" class="block px-3 py-3 text-sm font-bold text-gray-700 hover:text-brand border-b border-gray-50 uppercase tracking-wider">Inicio</a>
+                <a href="#notas" class="block px-3 py-3 text-sm font-bold text-gray-700 hover:text-brand border-b border-gray-50 uppercase tracking-wider">Análisis y Notas</a>
+                <a href="#" onclick="showPrivacyPolicy(); return false;" class="block px-3 py-3 text-sm font-bold text-gray-700 hover:text-brand border-b border-gray-50 uppercase tracking-wider">Aviso de Privacidad</a>
+                <button onclick="showAdminLogin()" class="block w-full text-left px-3 py-3 text-sm font-bold text-gray-400 hover:text-brand uppercase tracking-wider">Acceso Admin</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="relative pt-24 pb-16 md:pt-32 md:pb-28 flex items-center min-h-[65vh]">
+        <!-- Background Image -->
+        <div class="absolute inset-0 z-0">
+            <img src="portada.jpeg" alt="Congreso Nayarit" class="w-full h-full object-cover object-center">
+            <div class="absolute inset-0 hero-overlay"></div>
+        </div>
+        
+        <!-- Hero Content -->
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div class="max-w-3xl">
+                <div class="flex items-center space-x-2 mb-6">
+                    <div class="h-1 w-12 bg-accent"></div>
+                    <span class="text-accent text-sm font-bold tracking-[0.2em] uppercase">Vigilancia Ciudadana</span>
+                </div>
+                <h2 class="text-4xl md:text-5xl lg:text-6xl font-serif font-black text-white leading-[1.1] mb-6 drop-shadow-lg">
+                    El escrutinio ciudadano es la base de la democracia.
+                </h2>
+                <p class="text-lg md:text-xl text-gray-300 font-light mb-10 max-w-2xl leading-relaxed">
+                    Información, análisis y transparencia sobre las decisiones tomadas en el Congreso del Estado de Nayarit.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#notas" class="bg-white text-brand font-bold py-3 px-8 rounded hover:bg-gray-100 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+                        Leer Publicaciones
+                    </a>
+                    <a href="https://www.facebook.com/profile.php?id=61595470195100" target="_blank" class="bg-transparent border border-white/50 text-white font-bold py-3 px-8 rounded hover:bg-white/10 transition-all flex items-center">
+                        <i class="fa-brands fa-facebook mr-2"></i> Únete en Facebook
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN LEADERBOARD AD (Google AdSense 728x90) -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div class="w-full h-[100px] md:h-[120px] ad-space-placeholder rounded bg-gray-50 group">
+            <p class="text-gray-400 font-medium group-hover:text-gray-500 transition-colors">Espacio para Banner / Google Ads (728x90)</p>
+            <!-- REEMPLAZAR EL PÁRRAFO ANTERIOR CON EL CÓDIGO DE GOOGLE ADSENSE -->
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 flex flex-col lg:flex-row gap-12">
+        
+        <!-- Left Column: Main Content -->
+        <main class="w-full lg:w-[68%]" id="notas">
+            
+            <div class="flex justify-between items-end border-b border-gray-200 pb-4 mb-10">
+                <h3 class="text-3xl font-serif font-bold text-brand">Últimos Análisis y Notas</h3>
+                <div class="h-1 w-16 bg-accent"></div>
+            </div>
+
+            <!-- Panel de Administración Seguro -->
+            <div id="admin-panel" class="hidden bg-[#f8fbfd] p-6 md:p-8 rounded-lg shadow-inner border border-blue-100 mb-10 relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-brand text-white text-xs font-bold px-3 py-1 rounded-bl-lg">Modo Editor Activo</div>
+                <h4 class="text-xl font-serif font-bold text-brand mb-6"><i class="fa-solid fa-pen-nib mr-2 text-accent"></i>Redactar Nueva Publicación</h4>
+                
+                <form id="note-form" class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Título principal</label>
+                        <input type="text" id="note-title" required class="w-full px-4 py-3 bg-white border border-gray-300 rounded focus:ring-2 focus:ring-brand outline-none font-serif text-lg">
+                    </div>
+                    
+                    <div class="flex flex-col md:flex-row gap-5">
+                        <div class="w-full md:w-1/3">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Categoría</label>
+                            <select id="note-category" class="w-full px-4 py-3 bg-white border border-gray-300 rounded focus:ring-2 focus:ring-brand outline-none">
+                                <option value="Análisis">Análisis Legislativo</option>
+                                <option value="Noticia">Noticia</option>
+                                <option value="Transparencia">Transparencia</option>
+                            </select>
+                        </div>
+                        <div class="w-full md:w-2/3">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">URL de Imagen (Opcional)</label>
+                            <input type="url" id="note-image" placeholder="https://ejemplo.com/imagen.jpg" class="w-full px-4 py-3 bg-white border border-gray-300 rounded focus:ring-2 focus:ring-brand outline-none text-sm">
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-end mb-1">
+                            <label class="block text-sm font-semibold text-gray-700">Contenido (Párrafos normales)</label>
+                        </div>
+                        <textarea id="note-content" required rows="8" class="w-full px-4 py-3 bg-white border border-gray-300 rounded focus:ring-2 focus:ring-brand outline-none leading-relaxed"></textarea>
+                    </div>
+                    
+                    <div class="flex justify-end pt-2">
+                        <button type="submit" class="bg-brand hover:bg-brand-light text-white font-bold py-3 px-8 rounded shadow-md transition-all">
+                            <span id="btn-text">Publicar Artículo</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Contenedor de las Notas -->
+            <div id="notes-container" class="space-y-10">
+                <!-- Skeleton / Placeholder -->
+                <div class="text-center py-16 bg-white rounded border border-dashed border-gray-300">
+                    <i class="fa-solid fa-spinner fa-spin text-3xl text-gray-300 mb-4"></i>
+                    <p class="text-sm text-gray-500">Cargando publicaciones o esperando conexión...</p>
+                </div>
+            </div>
+            
+        </main>
+
+        <!-- Right Column: Sidebar -->
+        <aside class="w-full lg:w-[32%] space-y-10">
+            
+            <div class="bg-white p-8 rounded border border-gray-100 shadow-sm text-center">
+                <img src="logo.png" alt="Logo" class="w-24 h-24 mx-auto rounded-full border-2 border-brand mb-5 shadow-sm">
+                <h4 class="font-serif font-black text-2xl text-brand mb-3 tracking-tight">Observatorio MX</h4>
+                <p class="text-sm text-gray-600 leading-relaxed mb-6">
+                    Proyecto independiente dedicado a vigilar, analizar y transparentar el quehacer legislativo en Nayarit.
+                </p>
+                <a href="https://www.facebook.com/profile.php?id=61595470195100" target="_blank" class="inline-flex items-center justify-center w-full bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold py-2 px-4 rounded transition-colors text-sm">
+                    <i class="fa-brands fa-facebook-f mr-2"></i> Seguir Página Oficial
+                </a>
+            </div>
+
+            <!-- SIDEBAR AD SQUARE (Google AdSense 300x250) -->
+            <div class="w-full h-[250px] ad-space-placeholder rounded bg-gray-50 mx-auto max-w-[300px] group">
+                <p class="text-gray-400 text-sm font-medium text-center px-4 group-hover:text-gray-500 transition-colors">Banner Cuadrado<br>(300x250)</p>
+                <!-- REEMPLAZAR EL PÁRRAFO ANTERIOR CON EL CÓDIGO DE GOOGLE ADSENSE -->
+            </div>
+            
+            <!-- Legal Links -->
+            <div class="bg-gray-50 p-6 rounded border border-gray-200">
+                <h4 class="font-bold text-gray-800 mb-4 text-sm uppercase tracking-wider">Legal y Contacto</h4>
+                <ul class="space-y-3 text-sm">
+                    <li><a href="#" onclick="showPrivacyPolicy(); return false;" class="text-gray-600 hover:text-brand flex items-center"><i class="fa-solid fa-shield-halved w-5 text-gray-400"></i> Aviso de Privacidad</a></li>
+                    <li><a href="https://www.facebook.com/profile.php?id=61595470195100" target="_blank" class="text-gray-600 hover:text-brand flex items-center"><i class="fa-solid fa-envelope w-5 text-gray-400"></i> Mensaje Directo (Quejas)</a></li>
+                </ul>
+            </div>
+
+        </aside>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-brand-dark text-white pt-16 pb-8 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center text-gray-500 text-xs flex flex-col items-center">
+                <p>&copy; <span id="year"></span> Observatorio Legislativo Nayarit. Todos los derechos reservados.</p>
+                <p class="mt-1">observatoriomx.online</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL PRINCIPAL -->
+    <div id="custom-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 sm:p-6">
+        <div class="absolute inset-0 bg-brand-dark/80 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
+        <div class="bg-white rounded-lg shadow-2xl w-full max-w-4xl relative z-10 flex flex-col max-h-[90vh] transform scale-95 transition-transform duration-300" id="modal-content-box">
+            
+            <button onclick="closeModal()" class="absolute -top-12 right-0 md:-right-12 text-white hover:text-accent transition-colors text-xl p-2">
+                <i class="fa-solid fa-xmark fa-2x"></i>
+            </button>
+
+            <div class="px-6 py-4 md:px-10 md:py-6 border-b border-gray-100 flex-shrink-0 bg-gray-50 rounded-t-lg">
+                <div id="modal-meta" class="text-xs font-bold uppercase tracking-wider text-accent mb-2 hidden"></div>
+                <h3 id="modal-title" class="text-2xl md:text-3xl font-serif font-black text-brand leading-tight">Título</h3>
+            </div>
+            
+            <div class="p-6 md:p-10 overflow-y-auto prose max-w-none w-full" id="modal-message"></div>
+            
+            <div id="modal-footer" class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end space-x-3 rounded-b-lg hidden flex-shrink-0">
+                <button id="modal-cancel-btn" class="px-5 py-2 text-gray-600 hover:bg-gray-200 rounded font-medium transition-colors" onclick="closeModal()">Cancelar</button>
+                <button id="modal-ok-btn" class="px-5 py-2 bg-brand text-white rounded font-medium hover:bg-brand-light transition-colors" onclick="closeModal()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal con Google -->
+    <div id="admin-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-brand-dark/90 backdrop-blur-sm" onclick="closeAdminModal()"></div>
+        <div class="bg-white rounded-lg shadow-2xl p-8 max-w-sm w-full relative z-10 border-t-4 border-brand">
+            <div class="text-center mb-6">
+                <div class="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                    <i class="fa-brands fa-google text-xl text-brand"></i>
+                </div>
+                <h3 class="text-xl font-serif font-bold text-brand mb-2">Acceso Editor</h3>
+                <p class="text-xs text-gray-500 mb-4">Ingresa con una cuenta autorizada para gestionar las publicaciones.</p>
+            </div>
+            <div class="space-y-3">
+                <button onclick="verifyAdmin()" class="w-full flex items-center justify-center bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold py-3 px-4 rounded transition-colors text-sm shadow-sm">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5 mr-3" alt="Google">
+                    Ingresar con Google
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENIDO AVISO PRIVACIDAD -->
+    <div id="privacy-policy-content" class="hidden">
+        <h2>1. Identidad y Domicilio del Responsable</h2>
+        <p><strong>Observatorio Legislativo Nayarit</strong>, alojado en <strong>observatoriomx.online</strong>, es el responsable del uso y protección de sus datos en cumplimiento con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares.</p>
+        <h2>2. Datos Personales que Recabamos</h2>
+        <p>Datos de navegación: Dirección IP, tipo de navegador y comportamiento (recopilados a través de cookies). NO recabamos datos personales sensibles.</p>
+        <h2>3. Publicidad y Terceros (Google AdSense)</h2>
+        <p>Utilizamos cookies, web beacons y tecnologías similares. Proveedores de terceros, incluido <strong>Google (AdSense)</strong>, utilizan cookies para publicar anuncios basándose en las visitas anteriores de un usuario a nuestro sitio web u otros sitios. Usted puede inhabilitar la publicidad personalizada en la <a href="https://www.google.com/settings/ads" target="_blank">Configuración de anuncios de Google</a>.</p>
+        <h2>4. Contacto y Derechos</h2>
+        <p>Para dudas sobre privacidad, envíe un mensaje a nuestra página oficial de Facebook.</p>
+    </div>
+
+    <!-- SCRIPT PRINCIPAL CON LOGIN DE GOOGLE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        // Importamos GoogleAuthProvider y signInWithPopup
+        import { getAuth, signInAnonymously, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // ========================================================
+        // INSTRUCCIÓN: REEMPLAZA ESTOS DATOS CON LOS DE TU FIREBASE
+        // ========================================================
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY",
+            authDomain: "tu-proyecto.firebaseapp.com",
+            projectId: "tu-proyecto",
+            storageBucket: "tu-proyecto.appspot.com",
+            messagingSenderId: "TU_SENDER_ID",
+            appId: "TU_APP_ID"
+        };
+        // ========================================================
+        // CORREOS AUTORIZADOS
+        const authorizedEmails = ['luixnay@gmail.com', 'alancolosio@gmail.com'];
+        // ========================================================
+
+        const isFirebaseConfigured = firebaseConfig.apiKey && firebaseConfig.apiKey !== "TU_API_KEY";
+
+        let app, db, auth, provider;
+        window.isAdminAuthed = false;
+        let notesData = [];
+
+        // Funciones UI Generales
+        document.getElementById('year').textContent = new Date().getFullYear();
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => document.getElementById('mobile-menu').classList.toggle('hidden'));
+
+        window.showModal = function(title, message, isConfirm = false, confirmCb = null, meta = null) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-message').innerHTML = message;
+            
+            const metaDiv = document.getElementById('modal-meta');
+            if(meta) { metaDiv.textContent = meta; metaDiv.classList.remove('hidden'); } 
+            else { metaDiv.classList.add('hidden'); }
+            
+            const footer = document.getElementById('modal-footer');
+            const cancelBtn = document.getElementById('modal-cancel-btn');
+            const okBtn = document.getElementById('modal-ok-btn');
+            
+            if (isConfirm) {
+                footer.classList.remove('hidden'); cancelBtn.classList.remove('hidden');
+                okBtn.onclick = () => { if (confirmCb) confirmCb(); closeModal(); };
+            } else if (title.includes('Privacidad')) {
+                footer.classList.remove('hidden'); cancelBtn.classList.add('hidden'); okBtn.onclick = closeModal;
+            } else {
+                footer.classList.add('hidden');
+            }
+            
+            document.getElementById('custom-modal').classList.remove('hidden');
+            setTimeout(() => document.getElementById('modal-content-box').classList.remove('scale-95'), 10);
+        }
+
+        window.closeModal = function() {
+            document.getElementById('modal-content-box').classList.add('scale-95');
+            setTimeout(() => { document.getElementById('custom-modal').classList.add('hidden'); }, 200);
+        }
+        
+        window.showPrivacyPolicy = () => showModal("Aviso de Privacidad", document.getElementById('privacy-policy-content').innerHTML);
+        window.showAdminLogin = () => { document.getElementById('admin-modal').classList.remove('hidden'); }
+        window.closeAdminModal = () => document.getElementById('admin-modal').classList.add('hidden');
+
+        function formatDate(timestamp) {
+            if (!timestamp) return "Hoy";
+            return timestamp.toDate().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        // LÓGICA DE FIREBASE 
+        if (isFirebaseConfigured) {
+            try {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                provider = new GoogleAuthProvider(); // Proveedor de Google
+
+                onAuthStateChanged(auth, (user) => {
+                    // Verificamos si es un usuario normal (no anónimo) y si su correo está en la lista de permitidos
+                    if (user && !user.isAnonymous && authorizedEmails.includes(user.email)) {
+                        window.isAdminAuthed = true;
+                        document.getElementById('admin-panel').classList.remove('hidden');
+                        document.getElementById('nav-login-btn').classList.add('hidden');
+                        document.getElementById('nav-logout-btn').classList.remove('hidden');
+                    } else {
+                        window.isAdminAuthed = false;
+                        document.getElementById('admin-panel').classList.add('hidden');
+                        document.getElementById('nav-login-btn').classList.remove('hidden');
+                        document.getElementById('nav-logout-btn').classList.add('hidden');
+                    }
+                    renderNotes(); 
+                });
+
+                signInAnonymously(auth).then(() => {
+                    const q = query(collection(db, 'notas_oficiales'));
+                    onSnapshot(q, (snapshot) => {
+                        notesData = [];
+                        snapshot.forEach(doc => notesData.push({ id: doc.id, ...doc.data() }));
+                        notesData.sort((a, b) => (b.createdAt?.toMillis() || Date.now()) - (a.createdAt?.toMillis() || Date.now()));
+                        renderNotes();
+                    });
+                }).catch(e => console.error("Error Auth Anónimo:", e));
+
+            } catch (error) {
+                console.error("Fallo general Firebase:", error);
+                showWarningUI();
+            }
+        } else {
+            window.addEventListener('DOMContentLoaded', showWarningUI);
+        }
+
+        function showWarningUI() {
+            document.getElementById('notes-container').innerHTML = `
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded shadow-sm">
+                    <h3 class="text-yellow-800 font-bold text-lg mb-2"><i class="fa-solid fa-triangle-exclamation mr-2"></i> Base de datos no conectada</h3>
+                    <p class="text-sm text-yellow-700">Para que tu página funcione, debes ir a tu archivo de código y reemplazar <code>"TU_API_KEY"</code> con los datos reales de tu proyecto de Firebase.</p>
+                </div>`;
+        }
+
+        // --- NUEVO LOGIN CON GOOGLE ---
+        window.verifyAdmin = async function() {
+            if (!isFirebaseConfigured) return alert("Debes configurar las claves de Firebase primero.");
+            
+            try {
+                // Abre la ventana emergente de Google
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+                
+                // Si el correo está en nuestra lista aprobada
+                if (authorizedEmails.includes(user.email)) {
+                    closeAdminModal();
+                    showModal("Acceso Autorizado", `<p>Bienvenido, <strong>${user.displayName}</strong>. Tienes acceso al panel de edición.</p>`, false, null, "SISTEMA");
+                } else {
+                    // Si intenta entrar alguien que no está en la lista, lo sacamos
+                    await signOut(auth);
+                    alert("Acceso denegado: Este correo no tiene permisos de administrador.");
+                    await signInAnonymously(auth); // Lo regresamos a modo lectura
+                }
+            } catch (error) {
+                console.error("Error en login de Google:", error);
+                if (error.code !== 'auth/popup-closed-by-user') {
+                    alert("Ocurrió un error al intentar iniciar sesión con Google.");
+                }
+            }
+        }
+
+        window.logoutAdmin = async function() {
+            if(!auth) return;
+            await signOut(auth);
+            await signInAnonymously(auth);
+        }
+
+        window.renderNotes = function() {
+            const container = document.getElementById('notes-container');
+            container.innerHTML = '';
+
+            if (notesData.length === 0) {
+                container.innerHTML = `<div class="text-center py-16 bg-white rounded border border-dashed border-gray-300"><p class="text-gray-400">Aún no hay publicaciones.</p></div>`;
+                return;
+            }
+
+            notesData.forEach(note => {
+                const imgHTML = note.imageUrl ? `<div class="w-full md:w-1/3 h-48 md:h-auto overflow-hidden"><img src="${note.imageUrl}" class="w-full h-full object-cover"></div>` : '';
+                const btnDelete = window.isAdminAuthed ? `<button onclick="deleteNote('${note.id}')" class="text-xs text-red-500 font-bold ml-4"><i class="fa-solid fa-trash mr-1"></i> BORRAR</button>` : '';
+                
+                container.innerHTML += `
+                    <article class="bg-white rounded border border-gray-100 flex flex-col md:flex-row overflow-hidden hover:shadow-lg transition-shadow">
+                        ${imgHTML}
+                        <div class="p-6 flex-1 flex flex-col justify-center">
+                            <div class="mb-2"><span class="text-[10px] font-bold bg-blue-50 text-brand px-2 py-1 rounded uppercase tracking-wider">${note.category}</span></div>
+                            <h2 class="text-xl font-serif font-bold text-brand mb-2 cursor-pointer hover:text-blue-700" onclick="readNote('${note.id}')">${note.title}</h2>
+                            <div class="mt-4 flex items-center">
+                                <button onclick="readNote('${note.id}')" class="text-sm font-bold text-brand uppercase tracking-wider">Leer Artículo <i class="fa-solid fa-arrow-right text-xs ml-1"></i></button>
+                                ${btnDelete}
+                            </div>
+                        </div>
+                    </article>`;
+            });
+        }
+
+        document.getElementById('note-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if(!auth || !auth.currentUser || !window.isAdminAuthed) return;
+            
+            const btn = document.getElementById('btn-text');
+            btn.textContent = "Guardando...";
+            
+            try {
+                let content = document.getElementById('note-content').value;
+                content = content.split('\n').filter(p => p.trim() !== '').map(p => `<p>${p}</p>`).join('');
+                
+                await addDoc(collection(db, 'notas_oficiales'), {
+                    title: document.getElementById('note-title').value,
+                    category: document.getElementById('note-category').value,
+                    imageUrl: document.getElementById('note-image').value,
+                    content: content,
+                    createdAt: serverTimestamp()
+                });
+                document.getElementById('note-form').reset();
+            } catch (error) {
+                console.error(error); alert("Error al publicar.");
+            } finally {
+                btn.textContent = "Publicar Artículo";
+            }
+        });
+
+        window.deleteNote = function(id) {
+            showModal("Confirmar Acción", "¿Borrar este artículo?", true, async () => {
+                await deleteDoc(doc(db, 'notas_oficiales', id));
+            });
+        }
+
+        window.readNote = function(id) {
+            const note = notesData.find(n => n.id === id);
+            if(note) {
+                let html = note.imageUrl ? `<img src="${note.imageUrl}" class="w-full h-64 object-cover rounded mb-6">` : '';
+                html += `<div>${note.content}</div>`;
+                html += `<div class="mt-10 pt-4 border-t border-gray-200 text-xs text-gray-400 font-bold uppercase"><img src="logo.png" class="w-5 h-5 inline-block mr-2 grayscale opacity-50"> Redacción Observatorio MX</div>`;
+                showModal(note.title, html, false, null, `${note.category} • ${formatDate(note.createdAt)}`);
+            }
+        }
+    </script>
+</body>
+</html>
